@@ -376,7 +376,7 @@ classdef fit_dyFiles
                 elastSKw = mean(SKw(elastic_bin));
                 SKw(elastic_bin)=[]; Energ_meV(elastic_bin)=[];
                 
-                % remove neighbourhood of elastic bin, to help fitting the
+                % remove the neighbourhood of the elastic bin, to help fit the
                 % foot (comment if not desired)
                 if 0
                     near_elastic_bins = abs(Energ_meV)<0.18; % removing ueVs
@@ -407,52 +407,52 @@ classdef fit_dyFiles
                 % the spectrum, or don't take too much of the positive
                 % side, to avoid enhancing unimportant parts in the
                 % fitting).
-                
-                % set limits - first two are boundaries for the
-                % minCutOffVec, third is for maxCutOffVec
-                experLimits = [-5 -4 60];
-                simulLimits = [-20.1 -20 20];
-                
-                if ~isExpData, limits = simulLimits; lngthOfLimitVecs = 1; else limits = experLimits; lngthOfLimitVecs = 2; end
-                
-                minCutOffVec = find(limits(1) < Energ_meV & Energ_meV <= limits(2));
-                if isempty(minCutOffVec), minCutOffVec=1; end
-                minCutOffVec = minCutOffVec(1:floor(length(minCutOffVec)/lngthOfLimitVecs)+1:end);
-                maxCutOffVec = find(Energ_meV <= limits(3),1,'last');
-                
-                rmse = nan(length(minCutOffVec),length(maxCutOffVec));
-                for minIndx=1:length(minCutOffVec)
-                    if length(minCutOffVec) == 1 && length(maxCutOffVec) == 1, rmse = 1; break; end
-                    parfor maxIndx=1:length(maxCutOffVec)
-                        if maxCutOffVec(maxIndx)-minCutOffVec(minIndx) < 20
-                            continue;
-                        end
-                        indxVec = minCutOffVec(minIndx):maxCutOffVec(maxIndx);
-                        tmp_Energ_meV = Energ_meV(indxVec); tmp_SKw = SKw(indxVec);
-                        [~, gof, ~] = fit(tmp_Energ_meV,tmp_SKw,ftype);
-                        rmse(minIndx,maxIndx) = gof.rmse;
-                    end
-                end
-                
-                % ====== fit on the best range ======
-                [r,c] = find(rmse==min(rmse(:)));
-                res(j).dErange4fitting = [minCutOffVec(r):maxCutOffVec(c)];
-                
+
                 % if a fit range is supplied, use this range as the fitting
                 % range.
                 if exist('fitrange','var')
-                    if length(fitrange)==2 && numel(fitrange)==2
-                        res(j).dErange4fitting = find(fitrange(1) < Energ_meV & Energ_meV <= fitrange(2));
+                    res(j).dErange4fitting = find(fitrange(1) < Energ_meV & Energ_meV <= fitrange(2));
+                else
+
+                    % set limits - first two are boundaries for the
+                    % minCutOffVec, third is for maxCutOffVec
+                    experLimits = [-5 -4 60];
+                    simulLimits = [-20.1 -20 20];
+
+                    if ~isExpData, limits = simulLimits; lngthOfLimitVecs = 1; else limits = experLimits; lngthOfLimitVecs = 2; end
+
+                    minCutOffVec = find(limits(1) < Energ_meV & Energ_meV <= limits(2));
+                    if isempty(minCutOffVec), minCutOffVec=1; end
+                    minCutOffVec = minCutOffVec(1:floor(length(minCutOffVec)/lngthOfLimitVecs)+1:end);
+                    maxCutOffVec = find(Energ_meV <= limits(3),1,'last');
+
+                    rmse = nan(length(minCutOffVec),length(maxCutOffVec));
+                    for minIndx=1:length(minCutOffVec)
+                        if length(minCutOffVec) == 1 && length(maxCutOffVec) == 1, rmse = 1; break; end
+                        parfor maxIndx=1:length(maxCutOffVec)
+                            if maxCutOffVec(maxIndx)-minCutOffVec(minIndx) < 20
+                                continue;
+                            end
+                            indxVec = minCutOffVec(minIndx):maxCutOffVec(maxIndx);
+                            tmp_Energ_meV = Energ_meV(indxVec); tmp_SKw = SKw(indxVec);
+                            [~, gof, ~] = fit(tmp_Energ_meV,tmp_SKw,ftype);
+                            rmse(minIndx,maxIndx) = gof.rmse;
+                        end
                     end
+
+                    % ====== fit on the best range ======
+                    [r,c] = find(rmse==min(rmse(:)));
+                    res(j).dErange4fitting = [minCutOffVec(r):maxCutOffVec(c)];
                 end
-                
+
+
                 [ffun, gof, ~] = fit(Energ_meV(res(j).dErange4fitting),SKw(res(j).dErange4fitting),ftype);
                 res(j).ffun = ffun;
                 res(j).gof = gof;
                 res(j).ci = confint(ffun,0.66);
                 res(j).yBest=ffun(Energ_meV(res(j).dErange4fitting));
                 res(j).vBest = coeffvalues(ffun);
-                
+
                 if plotMode
                     tmpMod=mod(j,6);
                     if tmpMod-1 == 0
@@ -468,7 +468,7 @@ classdef fit_dyFiles
                     title([res(j).filename(end-11:end-4) ' dK=' sprintf('%0.3f',res(j).dK) ' ' char(197) '^{-1}' ' T=' sprintf('%d',res(j).temperature) ' K'])
                     if exist('axisize','var'),if length(axisize)==4 && numel(axisize)==4, axis(axisize); end; end
                 end
-                
+
                 if isGraphicOn, waitbar(j/length(res)); else disp(['finished res(' num2str(j/length(res)) ')']); end
                 if isExpData
                     if isfield(res(j).mean,'bkg') && isfield(res(j).mean,'C')
@@ -478,13 +478,13 @@ classdef fit_dyFiles
             end
             if isGraphicOn, close(h); end
         end
-        
+
         function res = fit_dyFiles_time_domain(res, varargin)
-            
+
             handPeak_tStart = 0;
             takeMagnitude = 1; % 0 - take Preal, 1 - take sqrt(Preal^2+Pimag^2), 2 - take magnitude but approximate Pimag with linear fit.
             disp(['takeMagnitude was set to ' num2str(takeMagnitude)])
-            
+
             args4Fit_Func = {};
             if nargin > 1
                 Fit_func = varargin{1};
@@ -494,11 +494,11 @@ classdef fit_dyFiles
             else
                 Fit_func = @Fit.nExponentDecayFit;
             end
-            
+
             if nargout < 1, disp('no res output param was defined, EXITING'); return; end
-            
+
             load_chess_parameters
-            
+
             %% Fit
             h = waitbar(0,'Please wait...');
             for j=1:length(res)
@@ -507,14 +507,14 @@ classdef fit_dyFiles
                 if size(setime,1)>size(setime,2), setime=setime'; end
                 if size(Pimag,1)>size(Pimag,2), Pimag=Pimag'; end
                 if size(Preal,1)>size(Preal,2), Preal=Preal'; end
-                
+
                 % If both positive and negative time exists ==> mirror
                 if setime(1)<0
                     indx1=setime<0; setime(indx1)=[];
                     Preal1=fliplr(Preal(indx1)); Preal(indx1)=[]; Preal(2:end)=(Preal(2:end)+Preal1)/2;
                     Pimag1=fliplr(Pimag(indx1)); Pimag(indx1)=[]; Pimag(2:end)=(Pimag(2:end)+Pimag1)/2;
                 end
-                
+
                 % get a subset of the ISF, based on min/max values
                 indx = Preal>0.01;
                 ind_indx = find(~indx,1,'first'); if isempty(ind_indx), ind_indx = length(indx); end
@@ -523,9 +523,9 @@ classdef fit_dyFiles
                     indx = 1:length(Preal);
                 end
                 Preal = Preal(indx); Pimag = Pimag(indx); setime = setime(indx);
-                
+
                 isExpData= isfield(res(j),'endStatus');
-                
+
                 tStartRange=[2,min(0.5*max(setime),6)]; tIndxLength=5;
                 %tStartRange=[30,min(0.5*max(setime),40)]; tIndxLength=2;
                 if tStartRange(1)>tStartRange(2), tStartRange(2)=max(setime); end
