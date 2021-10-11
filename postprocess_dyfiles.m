@@ -81,12 +81,7 @@ classdef postprocess_dyfiles
         
         function meas = fix_dy_file(meas)
             
-            % fix temperature reading
-            tSample = floor(str2num(meas.loop(1).startStatus.tSample));
-            if isempty(tSample) & length(meas.loop)>1
-                tSample = floor(str2num(meas.loop(2).startStatus.tSample));
-            end
-            meas.temperature = tSample;
+            meas.temperature = str2double(meas.endStatus.tSample);
             
             if meas.numloops > length(meas.loop)% measurement ended before completion
                 meas.numloops = length(meas.loop);
