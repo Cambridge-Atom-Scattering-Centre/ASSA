@@ -38,7 +38,7 @@ classdef SEexpTools
             load_chess_parameters;
             
             % define the number of points to use 
-            numOfPoints = 1e3;
+            numOfPoints = 2e3;
             
             %--------------------------------------------------------------
             %% find beam params (energy, wave-vector, profile)
@@ -95,6 +95,8 @@ classdef SEexpTools
             modeDE_SpecBroad = modeModelHandle(dK_Mat);
             modeModelHandle = SEexpTools.phononModel('RW');
             modeDE_RW = modeModelHandle(dK_Mat);
+            modeModelHandle = SEexpTools.phononModel('LR');
+            modeDE_LR = modeModelHandle(dK_Mat);
       %       modeModelHandle = SEexpTools.phononModel('WaterOnNi6meV');
       %       modeDE_W6 = modeModelHandle(dK_Mat);
 %            modeModelHandle = SEexpTools.phononModel('WaterOnNi2meV');
@@ -110,7 +112,8 @@ classdef SEexpTools
             energyMatchMat = zeros(size(dE_Mat));            
             energyMatchMat = energyMatchMat | abs(modeDE_SpecBroad-dE_Mat) < 1e-1 | abs(modeDE_SpecBroad+dE_Mat) < 1e-1;
             energyMatchMat = energyMatchMat | abs(modeDE_RW-dE_Mat) < 1e-1 | abs(modeDE_RW+dE_Mat) < 1e-1;
-     %        energyMatchMat = energyMatchMat | abs(modeDE_W6-dE_Mat) < 1e-1 | abs(modeDE_W6+dE_Mat) < 1e-1;
+            energyMatchMat = energyMatchMat | abs(modeDE_LR-dE_Mat) < 1e-1 | abs(modeDE_LR+dE_Mat) < 1e-1;
+%             energyMatchMat = energyMatchMat | abs(modeDE_W6-dE_Mat) < 1e-1 | abs(modeDE_W6+dE_Mat) < 1e-1;
              %energyMatchMat = energyMatchMat | abs(modeDE_NiMagnons-dE_Mat) < 1e-1 | abs(modeDE_NiMagnons+dE_Mat) < 1e-1;
 %           energyMatchMat = energyMatchMat | abs(modeDE_LA-dE_Mat) < 1e-1 | abs(modeDE_LA+dE_Mat) < 1e-1;
 %             energyMatchMat = energyMatchMat | abs(modeDE_W2-dE_Mat) < 1e-1 | abs(modeDE_W2+dE_Mat) < 1e-1;
@@ -121,21 +124,23 @@ classdef SEexpTools
             
             figure; hold on            
             plot(reshape(dK_Mat,1,[]),reshape(modeDE_SpecBroad,1,[]),'b.',reshape(dK_Mat,1,[]),-reshape(modeDE_SpecBroad,1,[]),'b.','MarkerSize',2)
-      %      plot(reshape(dK_Mat,1,[]),reshape(modeDE_RW,1,[]),'b.',reshape(dK_Mat,1,[]),-reshape(modeDE_RW,1,[]),'b.','MarkerSize',2)
+            plot(reshape(dK_Mat,1,[]),reshape(modeDE_RW,1,[]),'b.',reshape(dK_Mat,1,[]),-reshape(modeDE_RW,1,[]),'b.','MarkerSize',2)
+            plot(reshape(dK_Mat,1,[]),reshape(modeDE_LR,1,[]),'b.',reshape(dK_Mat,1,[]),-reshape(modeDE_LR,1,[]),'b.','MarkerSize',2)
 %             plot(reshape(dK_Mat,1,[]),reshape(modeDE_LA,1,[]),'b.',reshape(dK_Mat,1,[]),-reshape(modeDE_LA,1,[]),'b.','MarkerSize',2)
-      %      plot(reshape(dK_Mat,1,[]),reshape(modeDE_W6,1,[]),'b.',reshape(dK_Mat,1,[]),-reshape(modeDE_W6,1,[]),'b.','MarkerSize',2)
+%             plot(reshape(dK_Mat,1,[]),reshape(modeDE_W6,1,[]),'b.',reshape(dK_Mat,1,[]),-reshape(modeDE_W6,1,[]),'b.','MarkerSize',2)
 %              plot(reshape(dK_Mat,1,[]),reshape(modeDE_W2,1,[]),'b.',reshape(dK_Mat,1,[]),-reshape(modeDE_W2,1,[]),'b.','MarkerSize',2)
 %             plot(reshape(dK_Mat,1,[]),reshape(modeDE_NiMagnons,1,[]),'b.',reshape(dK_Mat,1,[]),-reshape(modeDE_NiMagnons,1,[]),'b.','MarkerSize',2)
             %plot(reshape(dK_Mat,1,[]),reshape(modeDE_ASP,1,[]),'b.',reshape(dK_Mat,1,[]),-reshape(modeDE_ASP,1,[]),'b.','MarkerSize',2)
             plot(reshape(dK_Mat,1,[]),reshape(dE_Mat,1,[]),'g.','MarkerSize',2)
-            xlabel("$\Delta K$",'Interpreter','latex')
-            ylabel("$\Delta E$",'Interpreter','latex')
+            xlabel("$\Delta K/\mathrm{\AA^{-1}}$",'Interpreter','latex')
+            ylabel("$\Delta E/\mathrm{meV}$",'Interpreter','latex')
             
             
             
             figure; hold on
             pcolor(lambda_i_Mat, lambda_f_Mat,wavelengthIntMat); shading flat
-            
+            xlabel("$\lambda_i/\mathrm{\AA}$",'Interpreter','latex')
+            ylabel("$\lambda_f/\mathrm{\AA}$",'Interpreter','latex')
             
             tmpIndx=find(wavelengthIntMat~=0);
             maxNonZeroLambdaFinal = max(lambda_f_Mat(tmpIndx));
@@ -158,8 +163,8 @@ classdef SEexpTools
                 p = polyfit(l1current(indx),l2current(indx),1);
                 hold on; plot([min(l1current) max(l1current)],p(1)*[min(l1current) max(l1current)]+p(2),'g')
                 tilt(i-1) = atan(p(1))*180/pi + 90;
-            xlabel("$\lambda_i$")
-            ylabel("$\lambda_f$")
+            xlabel("$\lambda_i/\mathrm{\AA}$",'Interpreter','latex')
+            ylabel("$\lambda_f/\mathrm{\AA}$",'Interpreter','latex')
             end
             %--------------------------------------------------------------
             %--------------------------------------------------------------
@@ -203,8 +208,8 @@ classdef SEexpTools
                 lambda_1D = lambda_f_Mat_new(:,1);
                 
                 
-                figure; plot(lambda_1D,wavelengthInt_proj); title(['tilted projection peasurement for ' num2str(tilt(i))])
-                xlabel("projected wavelength")
+                figure; plot(lambda_1D,wavelengthInt_proj); title(['tilted projection peasurement for ' num2str(tilt(i)) char(176)])
+                xlabel(join(["projected wavelength","/",char(197)]))
                 ylabel("projected intensity")
                 
                 
@@ -216,7 +221,7 @@ classdef SEexpTools
                 figure(h)
                 subplot(1+ceil(length(tilt)/2),2,i)
                 plot(energy(i,:)-E0,spectrum_in_energy(i,:))
-                xlabel('dE [meV]'); ylabel('Intensity'); title(['tilt=' num2str(tilt(i))]);
+                xlabel('dE/meV'); ylabel('Intensity'); title(['tilt=' num2str(tilt(i)) char(176)]);
                 axis([-10 10 -1e-22 max(spectrum_in_energy(i,:))*1.2])
             end
             figure(h)
@@ -377,7 +382,9 @@ classdef SEexpTools
                 case 'SpecBroad'
                     modeModelHandle= @(x) zeros(size(x));
                 case 'RW'
-                    modeModelHandle= @(x) 17.4*abs(x);
+                    modeModelHandle= @(x) 17.7*abs(x).^0.854;
+                case 'LR'
+                    modeModelHandle= @(x) 32.7*abs(x);
                 otherwise
             end
             
