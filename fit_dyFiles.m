@@ -3,7 +3,7 @@ classdef fit_dyFiles
     %   Detailed explanation goes here
     
     properties(Constant)
-        projFold='Cu111_4';
+        
     end
     
     methods(Static)
@@ -452,6 +452,7 @@ classdef fit_dyFiles
                 res(j).ci = confint(ffun,0.66);
                 res(j).yBest=ffun(Energ_meV(res(j).dErange4fitting));
                 res(j).vBest = coeffvalues(ffun);
+                res(j).SKw_normalised=real(SKw_orig)/elastSKw;
 
                 if plotMode
                     tmpMod=mod(j,6);
