@@ -141,7 +141,7 @@ classdef fit_dyFiles
                 resInd = resInd+1;
             end
             
-            % Sort by dK, is is more comfortable
+            % Sort by dK, which is more comfortable
             [~,indx]=sort(abs([res.dK]));
             res = res(indx);
             
@@ -339,7 +339,7 @@ classdef fit_dyFiles
             
             load_chess_parameters
             
-            % Sort by dK, is is more comfortable (for the res file its done
+            % Sort by dK, which is more comfortable (for the res file its done
             % in the preparation function
             if exist('refRes', 'var') && ~isempty(refRes)
                 [tmp_dK,indx]=sort(abs([refRes.dK]));
@@ -356,23 +356,15 @@ classdef fit_dyFiles
                 refRes_ = [];
                 if exist('refRes', 'var') && ~isempty(refRes),refRes_ = refRes(j); end
                 
-                
                 Energ_meV = res(j).Energ_meV; if size(Energ_meV,1) < size(Energ_meV,2), Energ_meV=Energ_meV'; end
                 SKw_orig = real(res(j).SKw); if size(SKw_orig,1) < size(SKw_orig,2), SKw_orig=SKw_orig'; end
-                
-                
-                % if experimental data, Apply detailed balance
-                if ~isempty(res(j).E0)
-                    indx = Energ_meV>0;
-                    SKw_orig(indx) = SKw_orig(indx).*exp(Energ_meV(indx)/(SE_kB*res(j).temperature/(SE_e/1000)));
-                end
                 
                 % ====== Construct the fitting parameters (Boundaries, starting guess, etc.) ======
                 
                 % find the elastic bin, then remove it (constant of the polarization curve)
                 SKw = SKw_orig;
                 elastic_bin = find(abs(Energ_meV)<1e-6);
-                if isempty(elastic_bin), elastic_bin=find(abs(Energ_meV)-min(abs(Energ_meV))<=0); end
+                if isempty(elastic_bin), elastic_bin = find(abs(Energ_meV)-min(abs(Energ_meV))<=0); end
                 elastSKw = mean(SKw(elastic_bin));
                 SKw(elastic_bin)=[]; Energ_meV(elastic_bin)=[];
                 

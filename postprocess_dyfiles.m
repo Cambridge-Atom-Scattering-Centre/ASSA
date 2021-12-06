@@ -31,7 +31,7 @@ classdef postprocess_dyfiles
             keepIlength = prsdArgs.Results.keepIlength;
             intpI = prsdArgs.Results.intpI;
             
-            % work-out the filenames
+            % work out the filenames
             [filenames, data_path] = postprocess_dyfiles.get_files({'filenames',filenames,'initStr',initStr,'NumVec',NumVec});
             
             h = waitbar(0,'Please wait...');
@@ -63,10 +63,20 @@ classdef postprocess_dyfiles
                     [~,energy,~,corrected_spectrum,~,~]=...
                         reconstruct_spectra(base_current,real_sig,imag_sig,E0,alpha1,base_current(end),0,1,0);
                     if energy(1)>energy(end)
-                        meas.Energ_meV=flip(energy-E0); meas.SKw=flip(corrected_spectrum);
+                        meas.Energ_meV = flip(energy-E0);
+                        meas.SKw_BefDB = flip(corrected_spectrum);
                     else
-                        meas.Energ_meV=energy-E0; meas.SKw=corrected_spectrum;
+                        meas.Energ_meV = energy-E0;
+                        meas.SKw_BefDB = corrected_spectrum;
                     end
+                    % meas.SKw_BefDB is the dynamic structure factor (DSF, or SKw) before applying detailed balance
+
+                    % Apply detailed balance
+                    clear indx
+                    indx = meas.Energ_meV>0;
+                    meas.SKw = meas.SKw_BefDB;
+                    load_chess_parameters
+                    meas.SKw(indx) = meas.SKw_BefDB(indx).*exp(meas.Energ_meV(indx)/(SE_kB*meas.temperature/(SE_e/1000)));
                     
                     processed_meas = meas;
                     save(filenameWithPath,'processed_meas','-append');
