@@ -2,8 +2,8 @@ function [base_current,alpha1,real_sig,imag_sig,reps,E0] = extract_pol_dyfiles(m
 
 if exist('intpI','var')&&~isempty(intpI)
     base_current=intpI;
-    real_sig=interp1(meas.ibase,meas.mean.Preal,intpI);
-    imag_sig=interp1(meas.ibase,meas.mean.Pimag,intpI);
+    real_sig=interp1(meas.ibase,meas.mean.Preal,intpI,'linear','extrap');
+    imag_sig=interp1(meas.ibase,meas.mean.Pimag,intpI,'linear','extrap');
 % when the current is not equally spaced, use linear interpolation to make
 % the base current equally spaced, so that fft can be used later in reconstruct_spectra.m.
 else

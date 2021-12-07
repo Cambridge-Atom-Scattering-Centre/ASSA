@@ -145,7 +145,7 @@ classdef postprocess_dyfiles
             
             % Remove spikes by neighbours
             % The idea here is to find outliers in each loop and exclude
-            % them from the data. Two itteration are used. First,
+            % them from the data. Two iteration are used. First,
             % find potential outliers automatically using the hampel
             % function, then, confirm manually. Following that, reassign
             % and calculate relevant fields such as Preal, Pimage, and Pmag.
