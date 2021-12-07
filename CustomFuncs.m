@@ -164,6 +164,7 @@ classdef CustomFuncs
             XScale=diff(get(gca,'XLim'));
             YScale=diff(get(gca,'YLim'));
             title(titleStr)
+            xlabel('Solenoid current/A'); ylabel('Spin polarisation')
             i=length(find(chosenPointsIndx));
             hold on;
             for j=1:i
