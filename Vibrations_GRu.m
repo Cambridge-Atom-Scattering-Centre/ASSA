@@ -435,21 +435,21 @@ classdef Vibrations_GRu
                     % and one Gaussian as the multiphonon background
                     
                     % === Raighly mode - loss and gain Gaussian(s) ===
-                    if 1
+                    if 0
                         fncName(2)={'ncl_{RW}'};
                         % positive
                         fitFuncStr = [fitFuncStr '+(a1/pi)*((a3/2)/((x-a2)^2+(a3/2)^2))'];
-                        a2=[0,20,3.76];
+                        a2=[0,20,5];
                         a1=[0 0.1 0.05];
                         a3=[0 6 0.15];
                         fitParams = [fitParams; a1;a2;a3];
                         
                     end
-                    if 0
+                    if 1
                         fncName(2)={'ncg_{RW}'};
                         % positive
                         fitFuncStr = [fitFuncStr '+a1*exp(-1*(x-a2)^2/a3^2)'];
-                        b2=[0 10 3.75];
+                        b2=[0 10 5];
                         b1=[0 0.1 0.01];
                         b3=[0 14 0.2];
                         fitParams = [fitParams; b1;b2;b3];
@@ -465,11 +465,11 @@ classdef Vibrations_GRu
                         fitParams = [fitParams; c1;c2;c3];
                     end
                     
-                    if 1
+                    if 0
                         fncName(3)={'ncg_{LR}'};
                         % positive
                         fitFuncStr = [fitFuncStr '+b1*exp(-1*(x-b2)^2/b3^2)'];
-                        b2=[4.4 4.6 4.5];
+                        b2=[4.4 8 6];
                         b1=[0 0.1 0.01];
                         b3=[0 14 1];
                         fitParams = [fitParams; b1;b2;b3];
@@ -486,7 +486,7 @@ classdef Vibrations_GRu
                         fitParams = [fitParams; c1;c2;c3];
                     end
                                         
-                    if 1
+                    if 0
                         fncName(5)={'ncg_{mph}'};
                         fitFuncStr = [fitFuncStr '+d1*exp(-1*(x-d2)^2/d3^2)'];
                         d2=[0 15 6];
@@ -494,7 +494,8 @@ classdef Vibrations_GRu
                         d3=[0 15 1];
                         fitParams = [fitParams; d1;d2;d3];
                     end
-                    if 0
+
+                    if 1
                         fncName(8)={'pl4_{main}'};
                         % a fourth order polynomial
                         fitFuncStr = [fitFuncStr '+n5+n1*x+n2*x.^2+n3*x.^3+n4*x.^4'];
