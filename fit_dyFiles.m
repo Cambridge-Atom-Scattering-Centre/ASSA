@@ -639,7 +639,7 @@ classdef fit_dyFiles
                 if isfield(res,'alpha'), alpha=num2str(res(j).alpha);
                 elseif isfield(res,'endStatus'), alpha=num2str(res(j).endStatus.alpha);
                 end
-                title([res(j).filename(end-11:end-4) ' dK = ' num2str(res(j).dK) ' T=' num2str(res(j).temperature) ' alpha=' alpha])
+                title([res(j).filename(end-11:end-4) ' dK=' num2str(res(j).dK,'%.2f') ' ' char(197) '^{-1} T=' num2str(res(j).temperature) ' K \alpha=' alpha])
                 if logPlot, set(gca, 'XScale', 'log'); end
                 
             end
