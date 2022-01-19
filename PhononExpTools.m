@@ -1,15 +1,10 @@
     
-%class spin echo experiment tools: plots and projects WIM
-classdef SEexpTools
-    %UNTITLED2 Summary of this class goes here
-    %   Detailed explanation goes here
+% class spin echo experiment tools: plots and projects WIM
+classdef PhononExpTools
     
     properties
         % there are no properties
     end
-    
-    
-    
     
     % define the functions, one by one
     % This class contains
@@ -18,20 +13,14 @@ classdef SEexpTools
     % - OneD2finalLambda
     % - wavelength2energy
     % - calcMinWithForModeInTilt
-    % - modeModelHandle
     % - exploreMeasurements
-    % - plotModels
+
     methods(Static)
-        
-        
-        
-        %---------------------------------------------------------------
-        % define calcMeasurementsParams function
-        %---------------------------------------------------------------
-        function [lambda_i_Mat, lambda_f_Mat,wavelengthIntMat, tilt] = calcMeasurementsParams(E0, FWHM, max_dEexchange, theta_i, theta_tot)
-            %calcMeasurementsParams to calculate the measurements needed to
-            %map a specific mode.
-            % modeModelHandle - handle to function which gets a dK, and gives dE.
+
+
+        function [lambda_i_Mat, lambda_f_Mat, wavelengthIntMat, tilt] = calcMeasurementsParams(E0, FWHM, max_dEexchange, theta_i, theta_tot, PhononModel)
+            % calcMeasurementsParams to calculate the measurements needed to
+            % map a specific mode.
             % E0 - the beams mean initial energy (in meV)
             
             % what does this do
@@ -41,16 +30,15 @@ classdef SEexpTools
             numOfPoints = 2e3;
             
             %--------------------------------------------------------------
-            %% find beam params (energy, wave-vector, profile)
+            %% find beam params (energy, wave vector, profile)
             %--------------------------------------------------------------
             % incident wavelength matrix
             lambda_i_tmp = linspace(energy2wavelength(E0+2*FWHM,3), energy2wavelength(E0-2*FWHM,3), numOfPoints);
             
             
-            
             % calculate the energy of a helium-3 particle with wavelength
             % lambda_i_tmp
-            Ei_vec = SEexpTools.wavelength2energy(lambda_i_tmp,3);    
+            Ei_vec = PhononExpTools.wavelength2energy(lambda_i_tmp,3);    
             
             %calculate the wavevector of a helium-3 particle with energy
             %Ei_vec
@@ -68,7 +56,7 @@ classdef SEexpTools
             lambda_f_tmp = linspace(energy2wavelength(max(Ei_vec)+max_dEexchange,3),energy2wavelength(max(min(Ei_vec)-max_dEexchange,1e-1),3),numOfPoints);            
             
             
-            Ef_vec = SEexpTools.wavelength2energy(lambda_f_tmp, 3);
+            Ef_vec = PhononExpTools.wavelength2energy(lambda_f_tmp, 3);
             kf_vec = energy2wavevector(Ef_vec,3);
             
             [lambda_i_Mat, lambda_f_Mat]= meshgrid(lambda_i_tmp,lambda_f_tmp);
@@ -89,68 +77,51 @@ classdef SEexpTools
             
             
             %--------------------------------------------------------------
-            %% find (dk, de) points of phonon
+            % find (dK, dE) points of phonon
             %--------------------------------------------------------------
-            modeModelHandle = SEexpTools.phononModel('SpecBroad');
-            modeDE_SpecBroad = modeModelHandle(dK_Mat);
-            modeModelHandle = SEexpTools.phononModel('RW');
-            modeDE_RW = modeModelHandle(dK_Mat);
-            modeModelHandle = SEexpTools.phononModel('LR');
-            modeDE_LR = modeModelHandle(dK_Mat);
-      %       modeModelHandle = SEexpTools.phononModel('WaterOnNi6meV');
-      %       modeDE_W6 = modeModelHandle(dK_Mat);
-%            modeModelHandle = SEexpTools.phononModel('WaterOnNi2meV');
-%            modeDE_W2 = modeModelHandle(dK_Mat);
-%            modeModelHandle = SEexpTools.phononModel('NiMagnons');
-%            modeDE_NiMagnons = modeModelHandle(dK_Mat);
-%             modeModelHandle = SEexpTools.phononModel('LongitudinalWaveNi111');
-%             modeDE_LA = modeModelHandle(dK_Mat);
-%             modeModelHandle = SEexpTools.phononModel('AcousticSurfacePlasmons');
-%             modeDE_ASP = modeModelHandle(dK_Mat); %modeDE_ASP(find(abs(modeDE_ASP) > 15))=0;
+            modeDE = cell(1,length(PhononModel));
+            for i = 1:length(PhononModel)
+                modeDE{i} = PhononModel(i).Dispersion(dK_Mat);
+            end
             
-            %find the points in which the scan line crosses the modes (modeDE and -modeDE)
-            energyMatchMat = zeros(size(dE_Mat));            
-            energyMatchMat = energyMatchMat | abs(modeDE_SpecBroad-dE_Mat) < 1e-1 | abs(modeDE_SpecBroad+dE_Mat) < 1e-1;
-            energyMatchMat = energyMatchMat | abs(modeDE_RW-dE_Mat) < 1e-1 | abs(modeDE_RW+dE_Mat) < 1e-1;
-            energyMatchMat = energyMatchMat | abs(modeDE_LR-dE_Mat) < 1e-1 | abs(modeDE_LR+dE_Mat) < 1e-1;
-%             energyMatchMat = energyMatchMat | abs(modeDE_W6-dE_Mat) < 1e-1 | abs(modeDE_W6+dE_Mat) < 1e-1;
-             %energyMatchMat = energyMatchMat | abs(modeDE_NiMagnons-dE_Mat) < 1e-1 | abs(modeDE_NiMagnons+dE_Mat) < 1e-1;
-%           energyMatchMat = energyMatchMat | abs(modeDE_LA-dE_Mat) < 1e-1 | abs(modeDE_LA+dE_Mat) < 1e-1;
-%             energyMatchMat = energyMatchMat | abs(modeDE_W2-dE_Mat) < 1e-1 | abs(modeDE_W2+dE_Mat) < 1e-1;
-            %energyMatchMat = energyMatchMat | abs(modeDE_ASP-dE_Mat) < 1e-1 | abs(modeDE_ASP+dE_Mat) < 1e-1;
+            % find the points in which the scan line crosses the modes (modeDE and -modeDE)
+            energyMatchMat = zeros(size(dE_Mat));
+            for i = 1:length(PhononModel)
+                energyMatchMat = energyMatchMat | abs(modeDE{i}-dE_Mat) < 1e-1 | abs(modeDE{i}+dE_Mat) < 1e-1;
+            end
 
             beamIntensityMat = repmat(beamIntensity,size(energyMatchMat,1),1);
             wavelengthIntMat = energyMatchMat .* beamIntensityMat;
             
+            % plot the scan curve and dispersion relations
             figure; hold on            
-            plot(reshape(dK_Mat,1,[]),reshape(modeDE_SpecBroad,1,[]),'b.',reshape(dK_Mat,1,[]),-reshape(modeDE_SpecBroad,1,[]),'b.','MarkerSize',2)
-            plot(reshape(dK_Mat,1,[]),reshape(modeDE_RW,1,[]),'b.',reshape(dK_Mat,1,[]),-reshape(modeDE_RW,1,[]),'b.','MarkerSize',2)
-            plot(reshape(dK_Mat,1,[]),reshape(modeDE_LR,1,[]),'b.',reshape(dK_Mat,1,[]),-reshape(modeDE_LR,1,[]),'b.','MarkerSize',2)
-%             plot(reshape(dK_Mat,1,[]),reshape(modeDE_LA,1,[]),'b.',reshape(dK_Mat,1,[]),-reshape(modeDE_LA,1,[]),'b.','MarkerSize',2)
-%             plot(reshape(dK_Mat,1,[]),reshape(modeDE_W6,1,[]),'b.',reshape(dK_Mat,1,[]),-reshape(modeDE_W6,1,[]),'b.','MarkerSize',2)
-%              plot(reshape(dK_Mat,1,[]),reshape(modeDE_W2,1,[]),'b.',reshape(dK_Mat,1,[]),-reshape(modeDE_W2,1,[]),'b.','MarkerSize',2)
-%             plot(reshape(dK_Mat,1,[]),reshape(modeDE_NiMagnons,1,[]),'b.',reshape(dK_Mat,1,[]),-reshape(modeDE_NiMagnons,1,[]),'b.','MarkerSize',2)
-            %plot(reshape(dK_Mat,1,[]),reshape(modeDE_ASP,1,[]),'b.',reshape(dK_Mat,1,[]),-reshape(modeDE_ASP,1,[]),'b.','MarkerSize',2)
-            plot(reshape(dK_Mat,1,[]),reshape(dE_Mat,1,[]),'g.','MarkerSize',2)
+            plot(reshape(dK_Mat,1,[]),reshape(dE_Mat,1,[]),'g.','MarkerSize', 7)
+            for i = 1:length(PhononModel)
+                plot([reshape(dK_Mat,1,[]),reshape(dK_Mat,1,[])], [-reshape(modeDE{i},1,[]),reshape(modeDE{i},1,[])], '.', 'MarkerSize', 7)
+            end
             xlabel("$\Delta K/\mathrm{\AA^{-1}}$",'Interpreter','latex')
             ylabel("$\Delta E/\mathrm{meV}$",'Interpreter','latex')
-            
+            title("Scan curve and phonon dispersions")
+            legend('scan curve',PhononModel.BranchName)
             
             
             figure; hold on
             pcolor(lambda_i_Mat, lambda_f_Mat,wavelengthIntMat); shading flat
             xlabel("$\lambda_i/\mathrm{\AA}$",'Interpreter','latex')
             ylabel("$\lambda_f/\mathrm{\AA}$",'Interpreter','latex')
+            title("Wavelength intensity matrix")
             
-            tmpIndx=find(wavelengthIntMat~=0);
+            tmpIndx = find(wavelengthIntMat~=0);
             maxNonZeroLambdaFinal = max(lambda_f_Mat(tmpIndx));
             minNonZeroLambdaFinal = min(lambda_f_Mat(tmpIndx));
             maxNonZeroLambdaIn = max(lambda_i_Mat(tmpIndx));
             minNonZeroLambdaIn = min(lambda_i_Mat(tmpIndx));
             axis([minNonZeroLambdaIn*0.9 maxNonZeroLambdaIn*1.1 minNonZeroLambdaFinal*0.9 maxNonZeroLambdaFinal*1.1])
             
-            featureNum = inputdlg('how many features there are?'); featureNum = str2num(featureNum{:});
-            zvl = questdlg('Choose a point above the features, then points which seperate the different features in lambda_out, then a point below the lowest feature');
+            featureNum = inputdlg('How many features are there in the wavelength intensity matrix?'); featureNum = str2num(featureNum{:});
+            quest = 'Choose a point above the features, then points which seperate the different features in $\lambda_f$, then a point below the lowest feature.';
+            opts.Interpreter = 'latex'; opts.Default = 'Yes';
+            zvl = questdlg(quest,'Instruction',opts);
             [l1,l2] = ginput(featureNum+1);
             
             for i=2:length(l2)
@@ -170,20 +141,9 @@ classdef SEexpTools
             %--------------------------------------------------------------
             
         end
-        %---------------------------------------------------------------
-        %---------------------------------------------------------------
+
         
-        
-        
-      
-        
-        
-        
-        
-        %---------------------------------------------------------------
-        % define projectByTilt function
-        %---------------------------------------------------------------
-        function [lambda_1D, lambda_axis_shifted, wavelengthInt_proj,energy,spectrum_in_energy] = projectByTilt(lambda_i_Mat, lambda_f_Mat, wavelengthIntMat_orig,tilt, E0)
+        function [lambda_1D, lambda_axis_shifted, wavelengthInt_proj,energy,spectrum_in_energy] = projectByTilt(lambda_i_Mat, lambda_f_Mat, wavelengthIntMat_orig, tilt, E0)
             
             lambda_axis_shifted=zeros(size(lambda_i_Mat,2),length(tilt));
             energy=zeros(size(lambda_i_Mat,2),length(tilt));
@@ -207,13 +167,11 @@ classdef SEexpTools
                 wavelengthInt_proj = sum(wavelengthIntMat_rotated,2);
                 lambda_1D = lambda_f_Mat_new(:,1);
                 
-                
                 figure; plot(lambda_1D,wavelengthInt_proj); title(['tilted projection peasurement for ' num2str(tilt(i)) char(176)])
                 xlabel(join(["projected wavelength","/",char(197)]))
                 ylabel("projected intensity")
                 
-                
-                [lambda_axis_shifted_tmp, energy_tmp, spectrum_in_energy_tmp] = SEexpTools.OneD2finalLambda(lambda_1D, wavelengthInt_proj, E0, tilt(i));
+                [lambda_axis_shifted_tmp, energy_tmp, spectrum_in_energy_tmp] = PhononExpTools.OneD2finalLambda(lambda_1D, wavelengthInt_proj, E0, tilt(i));
                 lambda_axis_shifted(i,1:length(lambda_axis_shifted_tmp)) = lambda_axis_shifted_tmp';
                 energy(i,1:length(energy_tmp)) = energy_tmp';
                 spectrum_in_energy(i,1:length(spectrum_in_energy_tmp)) = spectrum_in_energy_tmp';
@@ -229,27 +187,10 @@ classdef SEexpTools
             subplot(1+ceil(length(tilt)/2),2,(1+ceil(length(tilt)/2))*2-1)
             
         end
-        %---------------------------------------------------------------
-        %---------------------------------------------------------------
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        %---------------------------------------------------------------
-        % define OneD2finalLambda function
-        %---------------------------------------------------------------
+
+
         function [lambda_axis_shifted, energy, spectrum_in_energy] = OneD2finalLambda(lambda_1D, wavelengthInt_proj, E0, tilt)
             
-            %
             if ~exist('SE_h','var'), load_chess_parameters; 
             end
             
@@ -267,27 +208,16 @@ classdef SEexpTools
             
             spectrum_in_lambda=wavelengthInt_proj(lambda_axis_shifted>0);
             
-            energy=SEexpTools.wavelength2energy(lambda_pos,3);
+            energy=PhononExpTools.wavelength2energy(lambda_pos,3);
             
             jacobian=(SE_h/SE_3hemass^2)*(2*energy/SE_3hemass).^(-3/2);
             
             spectrum_in_energy=spectrum_in_lambda.*jacobian;
         end
-        %---------------------------------------------------------------
-        %---------------------------------------------------------------
-        
-        
-        
-        
-        
-        
-        
-        %---------------------------------------------------------------
-        % define wavelength2energy function
-        %---------------------------------------------------------------
+
+
         function E = wavelength2energy(lambdaInAnrstrem, mass)
             % calculate the energy E of a particle with mass and wavelength
-            
             
             % load in the basic parameters and select the correct atomic mass
             if ~exist('SE_amu','var'), load_chess_parameters; end
@@ -319,16 +249,10 @@ classdef SEexpTools
             %convert to joules (?)
             E = E_SI/SE_e*1000;
         end
-        %---------------------------------------------------------------
-        %---------------------------------------------------------------
-        
-        
-        
-        
-        
+
         
         %---------------------------------------------------------------
-        % define calcMinWithForModeInTilt function
+        % Calculate the width of the phonon mode due to the energy spread of the beam.
         %---------------------------------------------------------------
         function [dK, dE, modeWidthDue2beam] = calcMinWidthForModeInTilt(modeModelHandle, E0, FWHM, max_dK, tiltDeg)
             dK = -max_dK:0.001:max_dK; % in 1/Angstrem, TODO: implement angle resolution of instrument
@@ -337,75 +261,58 @@ classdef SEexpTools
             
             for i=1:length(dK)
                 lambda_0 = [energy2wavelength(E0,3), energy2wavelength(E0+dE(i),3)];
-                lambda_1 = [energy2wavelength(E0+FWHM/2,3), energy2wavelength(E0+FWHM/2+dE(i),3)];                
+                % the central point of the feature in wavelength intensity
+                % matrix
+                lambda_1 = [energy2wavelength(E0+FWHM/2,3), energy2wavelength(E0+FWHM/2+dE(i),3)];
+                % a peripheral point of the feature in wavelength intensity
+                % matrix
                 modeWidthDue2beam(i) = lambda_0*transMat' - lambda_1*transMat';
+                % the projected distance between the two points
             end
             
             plot3(dK,dE,modeWidthDue2beam,'o')
+            xlabel("$\Delta K/\mathrm{\AA^{-1}}$",'Interpreter','latex')
+            ylabel("$\Delta E/\mathrm{meV}$",'Interpreter','latex')
+            zlabel("Width due to the beam$/\mathrm{meV}$",'Interpreter','latex')
             
         end
-        %---------------------------------------------------------------
-        %---------------------------------------------------------------
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
+
         
         
         %---------------------------------------------------------------
         % define modeModelHandle function
         %---------------------------------------------------------------
-        function modeModelHandle = phononModel(modelName)
-            switch modelName
-                case 'RayleighWaveNi111'
-                    modeModelHandle=@(x) 16.88*sin(pi/2/(2.91/2).*x)-0.5192*sin(pi/2/(2.91/2).*x).^3;
-                    %                 case 'LongitudinalWaveNi111'
-                    %                     modeModelHandle=@(x) *sin(.*x)-*sin(.*x).^3;
-                case 'WaterOnNi6meV'
-                    modeModelHandle=@(x) (14.53.*(abs(x)<0.6).*abs(x).^2+5.559).*sign(x);
-                case 'specular'
-                    modeModelHandle=@(x) zeros(size(x));
-                case 'WaterOnNi2meV'
-                    modeModelHandle= @(x) repmat(2,size(x));
-                case 'NiMagnons'
-                    modeModelHandle= @(x) (364.*(abs(x)<0.2).*x.^2).*sign(x);
-                    %                 case 'AcousticSurfacePlasmons'
-                    %                     modeModelHandle=@(x) 4250*x.*(abs(4250*x)<20)+20*(abs(4250*x)>=20);
-                case 'SpecBroad'
-                    modeModelHandle= @(x) zeros(size(x));
-                case 'RW'
-                    modeModelHandle= @(x) 17.7*abs(x).^0.854;
-                case 'LR'
-                    modeModelHandle= @(x) 32.7*abs(x);
-                otherwise
-            end
-            
-        end
+%         function modeModelHandle = phononModel(modelName)
+%             switch modelName
+%                 case 'RayleighWaveNi111'
+%                     modeModelHandle=@(x) 16.88*sin(pi/2/(2.91/2).*x)-0.5192*sin(pi/2/(2.91/2).*x).^3;
+%                 case 'LongitudinalWaveNi111'
+%                     modeModelHandle=@(x) *sin(.*x)-*sin(.*x).^3;
+%                 case 'WaterOnNi6meV'
+%                     modeModelHandle=@(x) (14.53.*(abs(x)<0.6).*abs(x).^2+5.559).*sign(x);
+%                 case 'specular'
+%                     modeModelHandle=@(x) zeros(size(x));
+%                 case 'WaterOnNi2meV'
+%                     modeModelHandle= @(x) repmat(2,size(x));
+%                 case 'NiMagnons'
+%                     modeModelHandle= @(x) (364.*(abs(x)<0.2).*x.^2).*sign(x);
+%                 case 'AcousticSurfacePlasmons'
+%                     modeModelHandle=@(x) 4250*x.*(abs(4250*x)<20)+20*(abs(4250*x)>=20);
+%                 case 'SpecBroad'
+%                     modeModelHandle= @(x) zeros(size(x));
+%                 case 'RW_Ru(0001)'
+%                     modeModelHandle= @(x) 17.7*abs(x).^0.854;
+%                 case 'LR_Ru(0001)'
+%                     modeModelHandle= @(x) 32.7*abs(x);
+%                 case 'RW_Ni(111)'
+%                     modeModelHandle= @(x) 14.53*abs(x).^0.848;
+%                 otherwise
+%             end
+%             
+%         end
         %---------------------------------------------------------------
         %---------------------------------------------------------------
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        %---------------------------------------------------------------
-        % define exploreMeasurements function
-        %---------------------------------------------------------------
+
         function exploreMeasurements(path2file, filenames)
             
             for i=1:length(filenames)
@@ -438,44 +345,7 @@ classdef SEexpTools
                 %xlabel('dE [meV]'); ylabel('Intensity')
             end
         end
-        %---------------------------------------------------------------
-        %---------------------------------------------------------------
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        %---------------------------------------------------------------
-        %define plotModels function
-        %---------------------------------------------------------------
-        function plotModels()
-            dK = -10:0.05:10;
-            modeModelHandle1 = SEexpTools.phononModel('RayleighWaveAu111');
-            modeModelHandle2 = SEexpTools.phononModel('WaterOnAu6meV');
-            modeModelHandle3 = SEexpTools.phononModel('WaterOnAu2meV');
-            modeModelHandle4 = SEexpTools.phononModel('LongitudinalWaveAu111');
-            modeModelHandle5 = SEexpTools.phononModel('AcousticSurfacePlasmons');
-            plot(dK,modeModelHandle1(dK),'b',dK,-modeModelHandle1(dK),'b'); hold on
-            plot(dK,modeModelHandle2(dK),'b',dK,-modeModelHandle2(dK),'b'); hold on
-            plot(dK,modeModelHandle3(dK),'b',dK,-modeModelHandle3(dK),'b'); hold on
-            plot(dK,modeModelHandle4(dK),'b',dK,-modeModelHandle4(dK),'b'); hold on
-            plot(dK,modeModelHandle5(dK),'b',dK,-modeModelHandle5(dK),'b'); hold on            
-        end
-        %---------------------------------------------------------------
-        %---------------------------------------------------------------
-        
-        
-        
-        
-        
-        
-   
+
     end
     
 end
