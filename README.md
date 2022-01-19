@@ -122,7 +122,7 @@ When interpolating the data, try to keep the range of the query points within th
 
 ## Simulate phonon measurements to guide the experiments
 
-<details><summary>Generate the scan curve from phonon dispersions</summary>
+<details><summary>Generate the scan curve and wavelength intensity matrix from phonon dispersions</summary>
 <p>
 
 In order to simulate spin echo measurements, we need to get the phonon dispersion relations. They can be obtained from the literature or untilted spin echo measurements. The name and energy dispersion of the phonon mode should be saved to a struct. Here we call it `PhononModel`. 
@@ -145,7 +145,7 @@ There is a mode called `elastic`, which does not refer to any phonon, but corres
  
  Here `8` is the incident energy of the helium-3 beam in meV. `0.5` is the FWHM of the enengy spread. `20` is the maximum of the energy transfer to be considered in the calculation. `25` is the incident angle in degrees and `44.4` is the total scattering angle of the Cambridge HeSE instrument.
  
- After running the command, two figures should be created. The first one is the scan curve. The second one is the so called wavelength intensity matrix. The script will automatically ask you to identify features in the wavelength intensity matrix, which can be used to determine the optimal tilt angle in phonon measurements.
+ After running the command, two figures should be created. The first one is the scan curve. The second one is the so called wavelength intensity matrix. Definitions of scan curves and wavelength intensity matrix can be found [here](https://iopscience.iop.org/article/10.1088/0953-8984/22/30/304018/meta). The script will automatically ask you to identify features in the wavelength intensity matrix, which can be used to determine the optimal tilt angle in phonon measurements.
  
 </p>
 </details>
