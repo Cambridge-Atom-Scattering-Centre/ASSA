@@ -125,7 +125,7 @@ When interpolating the data, try to keep the range of the query points within th
 <details><summary>Generate the scan curve and wavelength intensity matrix from phonon dispersions</summary>
 <p>
 
- Definitions of scan curves and wavelength intensity matrix can be found [here](https://iopscience.iop.org/article/10.1088/0953-8984/22/30/304018/meta). In order to simulate those in spin echo measurements, we need to get the phonon dispersion relations. They can be obtained from the literature or untilted spin echo measurements. The name and dispersion relations of the phonon mode should be saved to a struct. Here we call it `PhononModel`, which contain two modes.
+ Definitions of scan curves and wavelength intensity matrices can be found [here](https://iopscience.iop.org/article/10.1088/0953-8984/22/30/304018/meta). In order to simulate those in spin echo measurements, we need to get the phonon dispersion relations. They can be obtained from the literature or untilted spin echo measurements. The name and dispersion relations of the phonon mode should be saved to a struct. Here we call it `PhononModel`, which contain two modes.
  
 ```matlab
 PhononModel(1).BranchName = "elastic";
