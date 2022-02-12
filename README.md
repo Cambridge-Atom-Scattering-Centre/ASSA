@@ -2,6 +2,8 @@
 
 Atom Surface Scattering Analysis
 
+MATLAB is required to use the scripts, some toolboxes are necessary as well, such as Signal Processing Toolbox.
+
 ## Analyse spin echo data in the energy domain
 
 <details><summary>Generate the spectrum</summary>
