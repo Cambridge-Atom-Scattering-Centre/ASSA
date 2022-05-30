@@ -48,7 +48,7 @@ classdef postprocess_dyfiles
                 tmp1 = who('meas','-file',filenameWithPath);
                 tmp2 = who('processed_meas','-file',filenameWithPath);
                 if isempty(tmp1)
-                    disp(['File ' filename ' does not exists']); continue
+                    disp(['File ' filename ' does not exist']); continue
                 elseif ~isempty(tmp2) && ~reProcessing
                     disp(['File ' filename ' was already post processed']); continue
                 end
@@ -78,6 +78,13 @@ classdef postprocess_dyfiles
                     load_chess_parameters
                     meas.SKw(indx) = meas.SKw_BefDB(indx).*exp(meas.Energ_meV(indx)/(SE_kB*meas.temperature/(SE_e/1000)));
                     
+                    % If the measurement is tilted, add the field setime to
+                    % avoid errors when processing untilted measurements
+                    % and tilted measurements together
+                    if ~isfield(meas,"setime")
+                        meas.setime=NaN;
+                    end
+
                     processed_meas = meas;
                     save(filenameWithPath,'processed_meas','-append');
                 catch ME
