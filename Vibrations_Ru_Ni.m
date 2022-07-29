@@ -1,7 +1,4 @@
-classdef Vibrations_GRu
-    
-    %UNTITLED2 Summary of this class goes here
-    %   Detailed explanation goes here
+classdef Vibrations_Ru_Ni
     
     properties
     end
@@ -74,6 +71,7 @@ classdef Vibrations_GRu
             % case 1 - 300K, Graphene on Ru(0001)
             
             switch dataSet
+                    
                 case 1
                     
                     % === Balistic - Gaussian ===
@@ -89,7 +87,7 @@ classdef Vibrations_GRu
                     % === Raighly mode - loss and gain Gaussian(s) ===
                     if 1
                         fncName(2)={'ncg_{RW}'};
-                        RW = @Vibrations_GRu.RW;
+                        RW = @Vibrations_Ru_Ni.RW;
                         
                         % positive
                         fitFuncStr = [fitFuncStr '+b1*exp(-1*(x-b2)^2/b3^2)'];
@@ -105,7 +103,7 @@ classdef Vibrations_GRu
                     %negative RW mode
                     if 0
                         fncName(3)={'ncg_{nRW}'};
-                        RW = @Vibrations_GRu.RW;
+                        RW = @Vibrations_Ru_Ni.RW;
                         % negative
                         fitFuncStr = [fitFuncStr '+b4*exp(-1*(x-b5)^2/b6^2)'];
                         dE = -RW(dk_scancurve);
@@ -119,7 +117,7 @@ classdef Vibrations_GRu
                     if 0
                         %the peak on the right of RW mode
                         fncName(4)={'ncg_{rofRW}'};
-                        RW = @Vibrations_GRu.RW;
+                        RW = @Vibrations_Ru_Ni.RW;
                         fitFuncStr = [fitFuncStr '+b7*exp(-1*(x-b8)^2/b9^2)'];
                         dE = RW(dk_scancurve);
                         [~, ind]=min(abs(dE-(dE_scancurve)));
@@ -131,7 +129,7 @@ classdef Vibrations_GRu
                     
                     if 1
                         fncName(5)={'ncg_{LR}'};
-                        LR = @Vibrations_GRu.LR;
+                        LR = @Vibrations_Ru_Ni.LR;
                         
                         % positive
                         fitFuncStr = [fitFuncStr '+c1*exp(-1*(x-c2)^2/c3^2)'];
@@ -147,7 +145,7 @@ classdef Vibrations_GRu
                         
                     if 0
                         fncName(6)={'ncg_{nLR}'};
-                        LR = @Vibrations_GRu.LR;
+                        LR = @Vibrations_Ru_Ni.LR;
                         % negative
                         fitFuncStr = [fitFuncStr '+c4*exp(-1*(x-c5)^2/c6^2)'];
                         dE = -LR(dk_scancurve);
@@ -161,7 +159,7 @@ classdef Vibrations_GRu
                     % === Longitudinal mode - loss and gain Gaussian(s) ===
                     if dK>-0.85&&dK<-0.25
                         fncName(7)={'ncg_{S7}'};
-                        S7= @Vibrations_GRu.S7;
+                        S7= @Vibrations_Ru_Ni.S7;
                         
                         % positive
                         fitFuncStr = [fitFuncStr '+d1*exp(-1*(x-d2)^2/d3^2)'];
@@ -175,7 +173,7 @@ classdef Vibrations_GRu
                     if 0
                         % negative S7 mode
                         fncName(8)={'ncg_{nS7}'};
-                        S7= @Vibrations_GRu.S7;
+                        S7= @Vibrations_Ru_Ni.S7;
                         
                         fitFuncStr = [fitFuncStr '+d4*exp(-1*(x-d5)^2/d6^2)'];
                         dE = -S7(dk_scancurve);
@@ -188,7 +186,7 @@ classdef Vibrations_GRu
                     
                     if dK>-0.45&&dK<-0.25
                         fncName(9)={'ncg_{S6}'};
-                        S6= @Vibrations_GRu.S6;
+                        S6= @Vibrations_Ru_Ni.S6;
                         fitFuncStr = [fitFuncStr '+e1*exp(-1*(x-e2)^2/e3^2)'];
                         dE = S6(dk_scancurve);
                         [~, ind]=min(abs(dE-(dE_scancurve)));
@@ -201,7 +199,7 @@ classdef Vibrations_GRu
                                         
                     if 0
                         fncName(10)={'ncg_{nS6}'};
-                        S6= @Vibrations_GRu.S6;
+                        S6= @Vibrations_Ru_Ni.S6;
                         fitFuncStr = [fitFuncStr '+e4*exp(-1*(x-e5)^2/e6^2)'];
                         dE = -S6(dk_scancurve);
                         [~, ind]=min(abs(dE-(dE_scancurve)));
@@ -229,7 +227,7 @@ classdef Vibrations_GRu
                         g1 = [0 0.1 0.002];
                         g2 = [-1 2 0.5];
                         g3 = [0 2 0.2];
-                        if dK>-0.15, g2=[6 10 8.2];g3 = [0 2 1]; end
+                        if dK>-0.15, g2=[6 10 8.2]; g3 = [0 2 1]; end
                         if dK<-0.15&&dK>-0.35, g2=[-1 0 -0.5]; g3=[0 2 0.3]; end
                         if dK<-0.35&&dK>-0.4, g1 = [0.001 0.1 0.003];g2 = [0 2 1.3]; g3 = [0.01 2 0.2]; end
                         fitParams = [fitParams; g1;g2;g3];
@@ -362,7 +360,7 @@ classdef Vibrations_GRu
                     % === Raighly mode - loss and gain Gaussian(s) ===
                     if 1
                         fncName(2)={'ncg_{RW}'};
-                        RW = @Vibrations_GRu.RW;
+                        RW = @Vibrations_Ru_Ni.RW;
                         
                         % positive
                         fitFuncStr = [fitFuncStr '+b1*exp(-1*(x-b2)^2/b3^2)'];
@@ -378,7 +376,7 @@ classdef Vibrations_GRu
                     
                     if 1
                         fncName(3)={'ncg_{postRW}'};
-                        RW = @Vibrations_GRu.RW;
+                        RW = @Vibrations_Ru_Ni.RW;
                         
                         % positive
                         fitFuncStr = [fitFuncStr '+e1*exp(-1*(x-e2)^2/e3^2)'];
@@ -394,7 +392,7 @@ classdef Vibrations_GRu
                     
                     if 1
                         fncName(4)={'ncg_{main}'};
-                        RW = @Vibrations_GRu.RW;
+                        RW = @Vibrations_Ru_Ni.RW;
                         
                         % positive
                         fitFuncStr = [fitFuncStr '+d1*exp(-1*(x-d2)^2/d3^2)'];
@@ -435,21 +433,21 @@ classdef Vibrations_GRu
                     % and one Gaussian as the multiphonon background
                     
                     % === Raighly mode - loss and gain Gaussian(s) ===
-                    if 0
+                    if 1
                         fncName(2)={'ncl_{RW}'};
                         % positive
                         fitFuncStr = [fitFuncStr '+(a1/pi)*((a3/2)/((x-a2)^2+(a3/2)^2))'];
-                        a2=[0,20,5];
+                        a2=[0,20,3.76];
                         a1=[0 0.1 0.05];
                         a3=[0 6 0.15];
                         fitParams = [fitParams; a1;a2;a3];
                         
                     end
-                    if 1
+                    if 0
                         fncName(2)={'ncg_{RW}'};
                         % positive
                         fitFuncStr = [fitFuncStr '+a1*exp(-1*(x-a2)^2/a3^2)'];
-                        b2=[0 10 5];
+                        b2=[0 10 3.75];
                         b1=[0 0.1 0.01];
                         b3=[0 14 0.2];
                         fitParams = [fitParams; b1;b2;b3];
@@ -465,11 +463,11 @@ classdef Vibrations_GRu
                         fitParams = [fitParams; c1;c2;c3];
                     end
                     
-                    if 0
+                    if 1
                         fncName(3)={'ncg_{LR}'};
                         % positive
                         fitFuncStr = [fitFuncStr '+b1*exp(-1*(x-b2)^2/b3^2)'];
-                        b2=[4.4 8 6];
+                        b2=[4.4 4.6 4.5];
                         b1=[0 0.1 0.01];
                         b3=[0 14 1];
                         fitParams = [fitParams; b1;b2;b3];
@@ -486,7 +484,7 @@ classdef Vibrations_GRu
                         fitParams = [fitParams; c1;c2;c3];
                     end
                                         
-                    if 0
+                    if 1
                         fncName(5)={'ncg_{mph}'};
                         fitFuncStr = [fitFuncStr '+d1*exp(-1*(x-d2)^2/d3^2)'];
                         d2=[0 15 6];
@@ -494,8 +492,7 @@ classdef Vibrations_GRu
                         d3=[0 15 1];
                         fitParams = [fitParams; d1;d2;d3];
                     end
-
-                    if 1
+                    if 0
                         fncName(8)={'pl4_{main}'};
                         % a fourth order polynomial
                         fitFuncStr = [fitFuncStr '+n5+n1*x+n2*x.^2+n3*x.^3+n4*x.^4'];
@@ -566,7 +563,7 @@ classdef Vibrations_GRu
                         c3=[0 15 1];
                         fitParams = [fitParams; c1;c2;c3];
                     end
-                                        
+                    
                     if 1
                         fncName(5)={'ncg_{mph2}'};
                         fitFuncStr = [fitFuncStr '+d1*exp(-1*(x-d2)^2/d3^2)'];
@@ -577,11 +574,11 @@ classdef Vibrations_GRu
                     end
                     
                     % ===== Background =====
-%                     fncName(16)={'lin_BG'};
-%                     fitFuncStr = [fitFuncStr '+y0'];
-%                     
-%                     fitParams = [fitParams; 0 0.1 0];
-
+                    %                     fncName(16)={'lin_BG'};
+                    %                     fitFuncStr = [fitFuncStr '+y0'];
+                    %
+                    %                     fitParams = [fitParams; 0 0.1 0];
+                    
                 case 5 % use one Lorentzian as the RW mode, one Gaussian as the LR mode,
                     % and a polynomial as the multiphonon background
                     
@@ -606,8 +603,391 @@ classdef Vibrations_GRu
                         b3=[0 14 1];
                         fitParams = [fitParams; b1;b2;b3];
                     end
-                                        
+                    
                     if 1
+                        fncName(5)={'pl4_{mph}'};
+                        fitFuncStr = [fitFuncStr '+d5+d1*x+d2*x.^2+d3*x.^3+d4*x.^4;'];
+                        
+                        d1=[-15 15 0];
+                        d2=[-15 15 0];
+                        d3=[-15 15 0];
+                        d4=[-15 15 0];
+                        d5=[-15 15 0];
+                        fitParams = [fitParams; d1;d2;d3;d4;d5];
+                    end
+
+                case 6 % use one Lorentzian as the RW mode, one Gaussian as the LR mode,
+                    % and a polynomial as the multiphonon background
+
+                    % === Raighly mode - loss and gain Gaussian(s) ===
+                    if 1
+                        fncName(2)={'ncl_{RW}'};
+                        % positive
+                        fitFuncStr = [fitFuncStr '+(a1/pi)*((a3/2)/((x-a2)^2+(a3/2)^2))'];
+                        a2=[0,20,7.4];
+                        a1=[0 0.5 0.05];
+                        a3=[0 6 0.4];
+                        fitParams = [fitParams; a1;a2;a3];
+
+                    end
+
+                    if 0
+                        fncName(3)={'ncl_{LR}'};
+                        % positive
+                        fitFuncStr = [fitFuncStr '+(b1/pi)*((b3/2)/((x-b2)^2+(b3/2)^2))'];
+                        b2=[8 11 9.5];
+                        b1=[0 0.1 0.01];
+                        b3=[0 14 1];
+                        fitParams = [fitParams; b1;b2;b3];
+                    end
+
+                    if 0
+                        fncName(3)={'ncg_{LR}'};
+                        % positive
+                        fitFuncStr = [fitFuncStr '+b1*exp(-1*(x-b2)^2/b3^2)'];
+                        b2=[8 10 9];
+                        b1=[0 0.1 0.01];
+                        b3=[0 14 1];
+                        fitParams = [fitParams; b1;b2;b3];
+                    end
+
+                    if 0
+                        fncName(4)={'ncg_{mph1}'};
+                        % positive
+                        fitFuncStr = [fitFuncStr '+c1*exp(-1*(x-c2)^2/c3^2)'];
+                        c2=[0 10 8];
+                        c1=[0 0.1 0.001];
+                        c3=[2 15 5];
+                        fitParams = [fitParams; c1;c2;c3];
+                    end
+
+                    if 1
+                        fncName(5)={'pl4_{mph}'};
+                        fitFuncStr = [fitFuncStr '+d5+d1*x+d2*x.^2+d3*x.^3+d4*x.^4'];
+
+                        d1=[-15 15 0];
+                        d2=[-15 15 0];
+                        d3=[-15 15 0];
+                        d4=[-15 15 0];
+                        d5=[-15 15 0];
+                        fitParams = [fitParams; d1;d2;d3;d4;d5];
+                    end
+
+                    if 0
+                        % ===== Background =====
+                        fncName(16)={'lin_BG'};
+                        fitFuncStr = [fitFuncStr '+y0'];
+                        fitParams = [fitParams; 0 0.1 0];
+                    end
+
+                case 7 % use one Lorentzian as the RW mode, one Gaussian as the LR mode,
+                    % and a polynomial as the multiphonon background for
+                    % the analysis when dK=-0.8 A^-1
+                    
+                    % === Raighly mode - loss and gain Gaussian(s) ===
+                    if 1
+                        fncName(2)={'ncl_{RW}'};
+                        % positive
+                        fitFuncStr = [fitFuncStr '+(a1/pi)*((a3/2)/((x-a2)^2+(a3/2)^2))'];
+                        a2=[0,20,5.5];
+                        a1=[0 0.5 0.05];
+                        a3=[0 6 0.4];
+                        fitParams = [fitParams; a1;a2;a3];
+                        
+                    end
+                    
+                    if 0
+                        fncName(3)={'ncl_{LR}'};
+                        % positive
+                        fitFuncStr = [fitFuncStr '+(b1/pi)*((b3/2)/((x-b2)^2+(b3/2)^2))'];
+                        b2=[8 11 9.5];
+                        b1=[0 0.1 0.01];
+                        b3=[0 14 1];
+                        fitParams = [fitParams; b1;b2;b3];
+                    end
+                    
+                    if 1
+                        fncName(5)={'pl4_{mph}'};
+                        fitFuncStr = [fitFuncStr '+d5+d1*x+d2*x.^2+d3*x.^3+d4*x.^4'];
+                        
+                        d1=[-15 15 0];
+                        d2=[-15 15 0];
+                        d3=[-15 15 0];
+                        d4=[-15 15 0];
+                        d5=[-15 15 0];
+                        fitParams = [fitParams; d1;d2;d3;d4;d5];
+                    end
+                    
+                    if 0
+                        % ===== Background =====
+                        fncName(16)={'lin_BG'};
+                        fitFuncStr = [fitFuncStr '+y0'];
+                        fitParams = [fitParams; 0 0.1 0];
+                    end
+
+                case 8 % use one Lorentzian as the RW mode,
+                    % one Lorentzian as the LR mode,
+                    % two additional Gaussians as background
+                    % === Raighly mode - loss and gain Gaussian(s) ===
+                    if 1
+                        fncName(2)={'ncl_{RW}'};
+                        % positive
+                        fitFuncStr = [fitFuncStr '+(a1/pi)*((a3/2)/((x-a2)^2+(a3/2)^2))'];
+                        if Ts<400
+                            a2=[0,20,7.3];
+                        else
+                            a2=[0 20 6.85];
+                        end
+                        a1=[0 5 1];
+                        a3=[0 6 0.4];
+                        fitParams = [fitParams; a1;a2;a3];
+
+                    end
+
+                    if 1
+                        fncName(3)={'ncl_{LR}'};
+                        % positive
+                        fitFuncStr = [fitFuncStr '+(b1/pi)*((b3/2)/((x-b2)^2+(b3/2)^2))'];
+                        if Ts>600
+                            b2=[8.5 9.1 8.6];
+                        elseif Ts<=600 && Ts>300
+                            b2=[8.6 9.1 8.8];
+                        else
+                            b2=[8.7 9.1 9];
+                        end
+                        b1=[0 3 0.1];
+                        b3=[0 0.8 0.25];
+                        fitParams = [fitParams; b1;b2;b3];
+                    end
+
+                    if 0
+                        fncName(5)={'pl6_{mph}'};
+                        fitFuncStr = [fitFuncStr '+d7+d1*x+d2*x.^2+d3*x.^3+d4*x.^4+d5*x.^5+d6*x.^6'];
+
+                        d1=[-15 15 0];
+                        d2=[-15 15 0];
+                        d3=[-15 15 0];
+                        d4=[-15 15 0];
+                        d5=[-15 15 0];
+                        d6=[-15 15 0];
+                        d7=[-15 15 0];
+                        fitParams = [fitParams; d1;d2;d3;d4;d5;d6;d7];
+                    end
+
+                    if 1
+                        fncName(4)={'ncg_{mph1}'};
+                        % positive
+                        fitFuncStr = [fitFuncStr '+c1*exp(-1*(x-c2)^2/c3^2)'];
+                        c2=[3.9 15 7.8];
+                        c1=[0.01 4 0.1];
+                        c3=[0.05 15 1];
+                        fitParams = [fitParams; c1;c2;c3];
+                    end
+
+                    if 1
+                        fncName(6)={'ncg_{mph2}'};
+                        % positive
+                        fitFuncStr = [fitFuncStr '+e1*exp(-1*(x-e2)^2/e3^2)'];
+                        e2=[7 16 7.5];
+                        e1=[0.05 1 0.5];
+                        e3=[0.05 15 0.5];
+                        fitParams = [fitParams; e1;e2;e3];
+                    end
+
+                case 9 % use one Lorentzian as the RW mode,
+                    % and a polynomial as the multiphonon background
+                    % used for gamma = 26.5 deg on Ni(111)
+                    % === Raighly mode - loss and gain Gaussian(s) ===
+                    if 1
+                        fncName(2)={'ncl_{RW}'};
+                        % positive
+                        fitFuncStr = [fitFuncStr '+(a1/pi)*((a3/2)/((x-a2)^2+(a3/2)^2))'];
+                        if Ts<300
+                            a2=[3.6,4.1,3.9]; a1=[0.1 5 0.1];
+                        else
+                            a2=[3.6,4,3.75]; a1=[0.1 5 0.1];
+                        end
+                        a3=[0 6 0.2];
+                        fitParams = [fitParams; a1;a2;a3];
+
+                    end
+
+                    if 1
+                        fncName(3)={'ncl_{LR}'};
+                        % positive
+                        fitFuncStr = [fitFuncStr '+(b1/pi)*((b3/2)/((x-b2)^2+(b3/2)^2))'];
+                        if Ts>600
+                            b2=[4.4 5 4.5];
+                        else
+                            b2=[4.4 5 4.7];
+                        end
+                        b1=[0.05 3 0.3];
+                        b3=[0 0.5 0.15];
+                        fitParams = [fitParams; b1;b2;b3];
+                    end
+
+                    if 1
+                        fncName(4)={'ncg_{mph1}'};
+                        % positive
+                        fitFuncStr = [fitFuncStr '+c1*exp(-1*(x-c2)^2/c3^2)'];
+                        c2=[3.9 5.5 4.05];
+                        c1=[0.01 1 0.1];
+                        c3=[0.05 15 1];
+                        fitParams = [fitParams; c1;c2;c3];
+                    end
+
+                    if 1
+                        fncName(6)={'ncg_{mph2}'};
+                        % positive
+                        fitFuncStr = [fitFuncStr '+e1*exp(-1*(x-e2)^2/e3^2)'];
+                        if Ts<500 && Ts>300
+                            e2=[4 6 4.6];
+                        else
+                            e2=[0 10 5.5];
+                        end
+                        e1=[0.05 1 0.5];
+                        e3=[0.05 15 0.5];
+                        fitParams = [fitParams; e1;e2;e3];
+                    end
+
+                    if 0
+                        fncName(7)={'ncg_{mph3}'};
+                        % positive
+                        fitFuncStr = [fitFuncStr '+f1*exp(-1*(x-f2)^2/f3^2)'];
+
+                        f1=[0 1 0.1];
+                        f3=[0 15 1];
+                        fitParams = [fitParams; f1;f2;f3];
+                    end
+
+                    if 0
+                        fncName(9)={'ncg_{mph3}'};
+                        % positive
+                        fitFuncStr = [fitFuncStr '+g1*exp(-1*(x-g2)^2/g3^2)'];
+                        g2=[0 10 4.4];
+                        g1=[0 1 0.2];
+                        g3=[0 15 0.9];
+                        fitParams = [fitParams; g1;g2;g3];
+                    end
+
+                case 10 % use one Lorentzian as the RW mode,
+                    % and a polynomial as the multiphonon background
+                    % === Raighly mode - loss and gain Gaussian(s) ===
+                    if 1
+                        fncName(2)={'ncl_{RW}'};
+                        % positive
+                        fitFuncStr = [fitFuncStr '+(a1/pi)*((a3/2)/((x-a2)^2+(a3/2)^2))'];
+                        if Ts<400
+                            a2=[0,20,7.3];
+                        else
+                            a2=[0 20 6.85];
+                        end
+                        a1=[0 5 0.1];
+                        a3=[0 6 0.4];
+                        fitParams = [fitParams; a1;a2;a3];
+
+                    end
+
+                    if 1
+                        fncName(3)={'ncl_{LR}'};
+                        % positive
+                        fitFuncStr = [fitFuncStr '+(b1/pi)*((b3/2)/((x-b2)^2+(b3/2)^2))'];
+                        if Ts>600
+                            b2=[8.5 9.1 8.6];
+                        elseif Ts<=600 && Ts>300
+                            b2=[8.6 9.1 8.8];
+                        else
+                            b2=[8.7 9.1 9];
+                        end
+                        b1=[0 3 0.01];
+                        b3=[0 0.8 0.25];
+                        fitParams = [fitParams; b1;b2;b3];
+                    end
+
+                    if 1
+                        fncName(5)={'pl4_{mph}'};
+                        fitFuncStr = [fitFuncStr '+d5+d1*x+d2*x.^2+d3*x.^3+d4*x.^4'];
+
+                        d1=[-15 15 0];
+                        d2=[-15 15 0];
+                        d3=[-15 15 0];
+                        d4=[-15 15 0];
+                        d5=[-15 15 0];
+                        fitParams = [fitParams; d1;d2;d3;d4;d5];
+                    end
+
+                    if 0
+                        fncName(4)={'ncg_{mph1}'};
+                        % positive
+                        fitFuncStr = [fitFuncStr '+c1*exp(-1*(x-c2)^2/c3^2)'];
+                        c2=[3.9 15 7.8];
+                        c1=[0.01 4 0.1];
+                        c3=[0.05 15 1];
+                        fitParams = [fitParams; c1;c2;c3];
+                    end
+
+                    if 0
+                        fncName(6)={'ncg_{mph2}'};
+                        % positive
+                        fitFuncStr = [fitFuncStr '+e1*exp(-1*(x-e2)^2/e3^2)'];
+                        e2=[7 16 7.5];
+                        e1=[0.05 1 0.5];
+                        e3=[0.05 15 0.5];
+                        fitParams = [fitParams; e1;e2;e3];
+                    end
+
+                case 11 % use one Lorentzian as the RW mode,
+                    % two additional Gaussians as background
+                    % === Raighly mode - loss and gain Gaussian(s) ===
+                    if 1
+                        fncName(2)={'ncl_{RW}'};
+                        % positive
+                        fitFuncStr = [fitFuncStr '+(a1/pi)*((a3/2)/((x-a2)^2+(a3/2)^2))'];
+                        a2=[0 20 7.3];
+                        a1=[0 5 1];
+                        a3=[0 6 0.4];
+                        fitParams = [fitParams; a1;a2;a3];
+
+                    end
+
+                    if 1
+                        fncName(5)={'pl4_{mph}'};
+                        fitFuncStr = [fitFuncStr '+d5+d1*x+d2*x.^2+d3*x.^3+d4*x.^4'];
+
+                        d1=[-15 15 0];
+                        d2=[-15 15 0];
+                        d3=[-15 15 0];
+                        d4=[-15 15 0];
+                        d5=[-15 15 0];
+                        fitParams = [fitParams; d1;d2;d3;d4;d5];
+                    end
+
+                case 12 % use one Lorentzian as the RW mode, one Gaussian as the LR mode,
+                    % and a polynomial as the multiphonon background
+
+                    % === Raighly mode - loss and gain Gaussian(s) ===
+                    if 1
+                        fncName(2)={'ncl_{RW}'};
+                        % positive
+                        fitFuncStr = [fitFuncStr '+(a1/pi)*((a3/2)/((x-a2)^2+(a3/2)^2))'];
+                        a2=[0,20,4];
+                        a1=[0 10 0.5];
+                        a3=[0 6 0.1];
+                        fitParams = [fitParams; a1;a2;a3];
+                        
+                    end
+                    
+                    if 1
+                        fncName(3)={'ncg_{LR}'};
+                        % positive
+                        fitFuncStr = [fitFuncStr '+b1*exp(-1*(x-b2)^2/b3^2)'];
+                        b2=[4 7 4.4];
+                        b1=[0 10 0.3];
+                        b3=[0 14 0.2];
+                        fitParams = [fitParams; b1;b2;b3];
+                    end
+                    
+                    if 0
                         fncName(5)={'pl4_{mph}'};
                         fitFuncStr = [fitFuncStr '+d5+d1*x+d2*x.^2+d3*x.^3+d4*x.^4;'];
                         
