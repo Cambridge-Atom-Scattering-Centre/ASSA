@@ -27,14 +27,14 @@ classdef PhononExpTools
             load_chess_parameters;
             
             % define the number of points to use 
-            numOfPoints = 2e3;
+            numOfPoints = 4e3;
             
             %--------------------------------------------------------------
             %% find beam params (energy, wave vector, profile)
             %--------------------------------------------------------------
             % incident wavelength matrix
             lambda_i_tmp = linspace(energy2wavelength(E0+2*FWHM,3), energy2wavelength(E0-2*FWHM,3), numOfPoints);
-            
+            %lambda_i_tmp = linspace(energy2wavelength(E0+28*FWHM,3), energy2wavelength(E0-5*FWHM,3), numOfPoints);
             
             % calculate the energy of a helium-3 particle with wavelength
             % lambda_i_tmp
@@ -53,7 +53,8 @@ classdef PhononExpTools
             
             
             % scattered(final, f) wavelength matrix
-            lambda_f_tmp = linspace(energy2wavelength(max(Ei_vec)+max_dEexchange,3),energy2wavelength(max(min(Ei_vec)-max_dEexchange,1e-1),3),numOfPoints);            
+            lambda_f_tmp = linspace(energy2wavelength(max(Ei_vec)+max_dEexchange,3),energy2wavelength(max(min(Ei_vec)-max_dEexchange,1e-1),3),numOfPoints);      
+            % lambda_f_tmp = linspace(energy2wavelength(max(Ei_vec)+10,3),energy2wavelength(max(min(Ei_vec)-2,1e-1),3),numOfPoints);
             
             
             Ef_vec = PhononExpTools.wavelength2energy(lambda_f_tmp, 3);
@@ -313,38 +314,6 @@ classdef PhononExpTools
         %---------------------------------------------------------------
         %---------------------------------------------------------------
 
-        function exploreMeasurements(path2file, filenames)
-            
-            for i=1:length(filenames)
-                
-                if mod(i,8) == 1
-                    figure; j=1;
-                else
-                    j=j+1;
-                end
-                subplot(4,2,j); hold on
-                pathAndFilename = [path2file filenames{i} '.mat'];                
-                load(pathAndFilename);
-                fileTitle=[filenames{i} ', tilt=' num2str(meas.tilt) ', gamma=ga-' num2str(meas.endStatus.gammaSpecular-meas.endStatus.gamma) ...
-                           ',azimuth=<110>, Temperature=' num2str(meas.endStatus.tSample) ', E_{beam}=' num2str(meas.beam.E0) ...
-                           ',FWHM=' num2str(meas.beam.FWHM) ', 1ML H_2O/Au(111)'];
-
-                [base_current,alpha1,real_sig,imag_sig,reps,E0]=extract_pol_dyfiles(pathAndFilename);
-                [lambda_pos,energy,spectrum,corrected_spectrum]=reconstruct_spectra(base_current,real_sig,1*imag_sig,E0,alpha1*180/pi,1.4,0,1);
-                plot(energy-E0,corrected_spectrum,'r')
-                %plot(lambda_pos,spectrum,'r')
-                [lambda_pos,energy,spectrum,corrected_spectrum]=reconstruct_spectra(base_current,real_sig,0*imag_sig,E0,alpha1*180/pi,1.4,0,1);
-                plot(energy-E0,corrected_spectrum,'b')
-                %plot(lambda_pos,spectrum,'b')
-                [lambda_pos,energy,spectrum,corrected_spectrum]=reconstruct_spectra(base_current,0*real_sig,1*imag_sig,E0,alpha1*180/pi,1.4,0,1);
-                plot(energy-E0,corrected_spectrum,'m')
-                %plot(lambda_pos,spectrum,'m')
-                axis([-10 10 -1e-23 1e-21])
-                legend('abs','real','imag')
-                title(fileTitle)
-                %xlabel('dE [meV]'); ylabel('Intensity')
-            end
-        end
 
     end
     

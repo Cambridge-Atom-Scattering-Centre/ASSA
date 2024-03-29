@@ -37,7 +37,7 @@ classdef postprocess_dyfiles
             h = waitbar(0,'Please wait...');
             for j=1:length(filenames)                
                 
-                close all
+                % close all
                 clear meas processed_meas
                 
                 filename=char(filenames(j));
@@ -64,19 +64,15 @@ classdef postprocess_dyfiles
                         reconstruct_spectra(base_current,real_sig,imag_sig,E0,alpha1,base_current(end),0,1,0);
                     if energy(1)>energy(end)
                         meas.Energ_meV = flip(energy-E0);
-                        meas.SKw_BefDB = flip(corrected_spectrum);
+                        meas.SKw = flip(corrected_spectrum);
                     else
                         meas.Energ_meV = energy-E0;
-                        meas.SKw_BefDB = corrected_spectrum;
+                        meas.SKw = corrected_spectrum;
                     end
                     % meas.SKw_BefDB is the dynamic structure factor (DSF, or SKw) before applying detailed balance
 
                     % Apply detailed balance
                     clear indx
-                    indx = meas.Energ_meV>0;
-                    meas.SKw = meas.SKw_BefDB;
-                    load_chess_parameters
-                    meas.SKw(indx) = meas.SKw_BefDB(indx).*exp(meas.Energ_meV(indx)/(SE_kB*meas.temperature/(SE_e/1000)));
                     
                     % If the measurement is tilted, add the field setime to
                     % avoid errors when processing untilted measurements

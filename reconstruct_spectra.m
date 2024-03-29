@@ -62,14 +62,18 @@ else % non beamprofile measurement
     
 end
 
+% figure;
+% plot(exp_lambda,bsf);
 
 lambda_pos=lambda_shift(lambda_shift>0);
 spectrum=bsf(lambda_shift>0);
-% figure; 
-% plot(exp_lambda(lambda_shift>0),spectrum);
+
+% figure;
+% plot(lambda_pos,spectrum);
+
 %% Energy domain
 energy=SE_h^2./(2*m*lambda_pos.^2);% in joules
-jacobian=SE_h/m^0.5./energy.^1.5;
+jacobian=SE_h/m^0.5./(2*energy).^1.5*sin(alpha1);
 corrected_spectrum=spectrum.*jacobian;
 energy=6.2415e21*energy;% convert to meV
 

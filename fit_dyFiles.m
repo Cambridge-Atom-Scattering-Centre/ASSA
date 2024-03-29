@@ -1,6 +1,6 @@
 classdef fit_dyFiles
-    %UNTITLED2 Summary of this class goes here
-    %   Detailed explanation goes here
+    
+    % plot_functional plots the functions used to fit the data.
     
     properties(Constant)
         
@@ -89,8 +89,30 @@ classdef fit_dyFiles
                         for k=0:4, eval(['n' num2str(1+k) '=cv(' num2str(i+k) ');']); end
                         y=n5+n1*x+n2*x.^2+n3*x.^3+n4*x.^4;
                         
-                        modes{j}= [modes{j} ': ' sprintf('n_5=%0.2f,n_4=%0.2f',n5,n4)];
+                        modes{j}= [modes{j}];
                         i=i+5;
+
+                    case 'pl5' % a fifth order polynomial
+                        for k=0:5, eval(['n' num2str(1+k) '=cv(' num2str(i+k) ');']); end
+                        y=n6+n1*x+n2*x.^2+n3*x.^3+n4*x.^4+n5*x.^5;
+
+                        modes{j}= [modes{j}];
+                        i=i+6;
+
+                    case 'pl6' % a sixth order polynomial
+                        for k=0:6, eval(['n' num2str(1+k) '=cv(' num2str(i+k) ');']); end
+                        y=n7+n1*x+n2*x.^2+n3*x.^3+n4*x.^4+n5*x.^5+n6*x.^6;
+
+                        modes{j}= [modes{j}];
+                        i=i+7;
+
+                    case 'pl7' % a sixth order polynomial
+                        for k=0:7, eval(['n' num2str(1+k) '=cv(' num2str(i+k) ');']); end
+                        y=n8+n1*x+n2*x.^2+n3*x.^3+n4*x.^4+n5*x.^5+n6*x.^6+n7*x.^7;
+
+                        modes{j}= [modes{j}];
+                        i=i+8;
+
                     otherwise
                         y = cv(i)*exp(-1*(x-cv(i+1)).^2/cv(i+2)^2)+cv(i+3)*exp(-1*(x-cv(i+4)).^2/cv(i+5)^2);
                         if cv(i)>0.01, modes{j}= [modes{j} ': ' sprintf('%0.2f',cv(i+1))]; end
@@ -465,7 +487,7 @@ classdef fit_dyFiles
                 if isGraphicOn, waitbar(j/length(res)); else disp(['finished res(' num2str(j/length(res)) ')']); end
                 if isExpData
                     if isfield(res(j).mean,'bkg') && isfield(res(j).mean,'C')
-                        res(j).elastpeak=elastSKw*(mean(res(j).mean.C)-res(j).mean.bkg);
+                        res(j).elastpeak=elastSKw;
                     end
                 end
             end
@@ -639,7 +661,7 @@ classdef fit_dyFiles
                 if isfield(res,'alpha'), alpha=num2str(res(j).alpha);
                 elseif isfield(res,'endStatus'), alpha=num2str(res(j).endStatus.alpha);
                 end
-                title([res(j).filename(end-11:end-4) ' dK=' num2str(res(j).dK,'%.2f') ' ' char(197) '^{-1} T=' num2str(res(j).temperature) ' K \alpha=' alpha '^{\circ}'])
+                title([res(j).filename(end-11:end-4) ' dK = ' num2str(res(j).dK) ' T=' num2str(res(j).temperature) ' alpha=' alpha])
                 if logPlot, set(gca, 'XScale', 'log'); end
                 
             end

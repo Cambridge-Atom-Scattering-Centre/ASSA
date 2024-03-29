@@ -2,12 +2,9 @@
 
 Atom Surface Scattering Analysis
 
-MATLAB is required to use the scripts, some toolboxes are necessary as well, such as Signal Processing Toolbox.
-
 ## Analyse spin echo data in the energy domain
 
-<details><summary>Generate the spectrum</summary>
-<p>
+### Generate the spectrum
 
 All the measurements HeSE takes now is stored in a .mat file, so It will be most convenient to use MATLAB to analyse them. First of all, we give an example file (*examples/dy018713.mat*). In order to analyse it in the energy domain, or to extract the phonon spectrum, one can do the following:
 
@@ -37,11 +34,7 @@ The spectrum should be generated as shown below.
   * Sometimes the system can have a glitch and the signal will have an outlier. In that case we will set `'fixFalsePositive'` to `0` in order to fix that. In the current example it is not needed, so `'fixFalsePositive'` is `1`.
 * `fit_dyFiles.prepare_measured_set_for_fitting` further process the data in `processed_meas`, and saves the data into a structrue called `res`. The phonon spectrum as a function of energy transfer is stored in `res(1).Energ_meV` and `res(1).SKw`.
 
-</p>
-</details>
-
-<details><summary>Additional features of postprocess_dyfiles.postprocess_dyfiles</summary>
-<p>
+### Additional features of `postprocess_dyfiles.postprocess_dyfiles`
 
 The raw data taken in a typical spin echo measurement, such as examples/dy018713.mat, can be extracted and plotted using
 ```matlab
@@ -118,41 +111,3 @@ to see the spectrum:
 <img src="https://github.com/Cambridge-Atom-Scattering-Centre/ASSA/blob/main/examples/dy019253_pho.jpg" width="600">
 
 When interpolating the data, try to keep the range of the query points within the range of data points. For example, don't make `'intpI'` be `0:0.001:100` if `meas.ibase` is only from 0 A to 10 A. If not, there can be significant distortion in the generated spectrum.
-
-</p>
-</details>
-
-## Simulate phonon measurements to guide the experiments
-
-<details><summary>Generate the scan curve and wavelength intensity matrix from phonon dispersions</summary>
-<p>
-
- Definitions of scan curves and wavelength intensity matrices can be found [here](https://iopscience.iop.org/article/10.1088/0953-8984/22/30/304018/meta). In order to simulate those in spin echo measurements, we need to get the phonon dispersion relations. They can be obtained from the literature or untilted spin echo measurements. The name and dispersion relations of the phonon mode should be saved to a struct. Here we call it `PhononModel`, which contain two modes.
- 
-```matlab
-PhononModel(1).BranchName = "elastic";
-PhononModel(1).Dispersion = @(x) zeros(size(x));
-PhononModel(2).BranchName = 'Ru(0001) RW';
-PhononModel(2).Dispersion = @(x) 17.7*abs(x).^0.854;
-```
-
-The first mode is called `elastic`, which actually does not refer to any phonon, but corresponds to the elastic scattering of helium atoms. Note that the dispersion of Rayleigh Wave mode phonons in Ru(0001) provided here is only accurate at low momentum transfers.
- 
- The next step is to use that `PhononModel` struct in a function.
- 
- ```matlab
- [lambda_i_Mat, lambda_f_Mat, wavelengthIntMat, tilt] = ...
-    PhononExpTools.calcMeasurementsParams(8, 0.5, 20, 25, 44.4, PhononModel);
- ```
- 
- Here `8` is the incident energy of the helium-3 beam in meV. `0.5` is the FWHM of the enengy spread. `20` is the maximum of the energy transfer to be considered in the calculation. `25` is the incident angle in degrees and `44.4` is the total scattering angle of the Cambridge HeSE instrument.
- 
- After running the command, two figures should be created. The first one is the scan curve. 
- 
- <img src="https://github.com/Cambridge-Atom-Scattering-Centre/ASSA/blob/main/examples/scancurve.jpg" width="600">
- 
- The second one is the so called wavelength intensity matrix. The script will automatically ask you to identify features in the wavelength intensity matrix, which can be used to determine the optimal tilt angle in phonon measurements. In the figure, the upper feature is due to elastic scattering, and the lower one corresponds to phonons.
- 
- <img src="https://github.com/Cambridge-Atom-Scattering-Centre/ASSA/blob/main/examples/WIM.jpg" width="600">
-</p>
-</details>

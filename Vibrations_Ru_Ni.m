@@ -349,32 +349,22 @@ classdef Vibrations_Ru_Ni
                     
                     % === Balistic - Gaussian ===
                     if 1
-                        fncName(1) = {'cl_{Jump}'};
-                        fitFuncStr = [fitFuncStr '+' '(a1/pi)*((a2/2)/(x^2+(a2/2)^2))'];
+                        fncName(1) = {'cg_{Jump}'};
+                        fitFuncStr = [fitFuncStr '+a1*exp(-1*x^2/a2^2)'];
 %                         b2_mid = 2*sqrt(log(2))*SE_hbar*abs(dK*1e10)*Vibrations.get_v0(Ts,104.15)/SE_e*1000;
 %                         b1 = [0 0.5 0.01]; b2 = [b2_mid*0.95 b2_mid*1.05 b2_mid];
-                        a1 = [0 1 0.1]; a2 = [0 10 0.01];
+                        a1 = [0.7 1 0.99]; a2 = [0 0.15 0.05];
                         fitParams = [fitParams; a1; a2];
                     end
                     
-                    % === Raighly mode - loss and gain Gaussian(s) ===
-                    if 1
-                        fncName(2)={'ncg_{RW}'};
-                        RW = @Vibrations_Ru_Ni.RW;
-                        
-                        % positive
-                        fitFuncStr = [fitFuncStr '+b1*exp(-1*(x-b2)^2/b3^2)'];
-                        dE = RW(dk_scancurve);
-                        [~, ind]=min(abs(dE-(dE_scancurve)));
-                        b2=[dE(ind)*0.95 dE(ind)*1.05 dE(ind)];
-                        b1=[0 0.1 0.05];
-                        b3=[0 6 1];
-                        if dK>-0.15, b2=[0 2 0.9]; end
-                        if dK>-0.65, b3=[0 1 0.4]; end
-                        fitParams = [fitParams; b1;b2;b3];
+                    if 0
+                        fncName(2) = {'cl_{Jump}'};
+                        fitFuncStr = [fitFuncStr '+' '(b1/pi)*((b2/2)/(x^2+(b2/2)^2))'];
+                        b1 = [0 1 0.0001]; b2 = [0 10 0.05];
+                        fitParams = [fitParams; b1; b2];
                     end
                     
-                    if 1
+                    if 0
                         fncName(3)={'ncg_{postRW}'};
                         RW = @Vibrations_Ru_Ni.RW;
                         
@@ -390,7 +380,7 @@ classdef Vibrations_Ru_Ni
                         fitParams = [fitParams; e1;e2;e3];
                     end
                     
-                    if 1
+                    if 0
                         fncName(4)={'ncg_{main}'};
                         RW = @Vibrations_Ru_Ni.RW;
                         
@@ -403,12 +393,24 @@ classdef Vibrations_Ru_Ni
                         d3=[0.05 15 5];
                         if dK>-0.15, d2=[0 6 4]; end
                         if dK<-0.65, d1=[0 1 0.005]; d3=[0.05 15 5]; end
-%                         if dK<-0.85, d3=[0 40 20]; end
+                        % if dK<-0.85, d3=[0 40 20]; end
                         fitParams = [fitParams; d1;d2;d3];
                     end
-                    
-                    % === Manual fixed - Gaussian(s) ===
+
                     if 1
+                        fncName(5)={'pl4_{mph}'};
+                        fitFuncStr = [fitFuncStr '+d5+d1*x+d2*x.^2+d3*x.^3+d4*x.^4'];
+
+                        d1=[-15 15 0];
+                        d2=[-15 15 0];
+                        d3=[-15 15 0];
+                        d4=[-15 15 0];
+                        d5=[-15 15 0];
+                        fitParams = [fitParams; d1;d2;d3;d4;d5];
+                    end
+
+                    % === Manual fixed - Gaussian(s) ===
+                    if 0
                         fncName(10)={'ncg_{manual1}'};
                         fitFuncStr = [fitFuncStr '+c1*exp(-1*(x-c2)^2/c3^2)'];
                         c1 = [0 1 0.1]; c2 = [0 40 10]; c3 = [0 50 5];
@@ -417,7 +419,7 @@ classdef Vibrations_Ru_Ni
                         fitParams = [fitParams; c1;c2;c3];
                     end
                     
-                    if 1
+                    if 0
                         fncName(11)={'ncg_{manual2}'};
                         fitFuncStr = [fitFuncStr '+j1*exp(-1*(x-j2)^2/j3^2)'];
                         j1 = [0 1 0.2]; j2 = [-5 0 -1.5]; j3 = [0 50 3];
@@ -427,8 +429,8 @@ classdef Vibrations_Ru_Ni
                     % ===== Background =====
                     fncName(16)={'lin_BG'};
                     fitFuncStr = [fitFuncStr '+y0'];
-                    
                     fitParams = [fitParams; 0 max(min(y),0.002) 0];
+
                 case 3 % use one Lorentzian as the RW mode, one Gaussian as the LR mode,
                     % and one Gaussian as the multiphonon background
                     
@@ -594,7 +596,7 @@ classdef Vibrations_Ru_Ni
                         
                     end
                     
-                    if 1
+                    if 0
                         fncName(3)={'ncg_{LR}'};
                         % positive
                         fitFuncStr = [fitFuncStr '+b1*exp(-1*(x-b2)^2/b3^2)'];
@@ -734,9 +736,9 @@ classdef Vibrations_Ru_Ni
                         % positive
                         fitFuncStr = [fitFuncStr '+(a1/pi)*((a3/2)/((x-a2)^2+(a3/2)^2))'];
                         if Ts<400
-                            a2=[0,20,7.3];
+                            a2=[0,20,7.4];
                         else
-                            a2=[0 20 6.85];
+                            a2=[0 20 7.3];
                         end
                         a1=[0 5 1];
                         a3=[0 6 0.4];
@@ -744,7 +746,7 @@ classdef Vibrations_Ru_Ni
 
                     end
 
-                    if 1
+                    if 0
                         fncName(3)={'ncl_{LR}'};
                         % positive
                         fitFuncStr = [fitFuncStr '+(b1/pi)*((b3/2)/((x-b2)^2+(b3/2)^2))'];
@@ -774,24 +776,31 @@ classdef Vibrations_Ru_Ni
                         fitParams = [fitParams; d1;d2;d3;d4;d5;d6;d7];
                     end
 
-                    if 1
+                    if 0
                         fncName(4)={'ncg_{mph1}'};
                         % positive
                         fitFuncStr = [fitFuncStr '+c1*exp(-1*(x-c2)^2/c3^2)'];
                         c2=[3.9 15 7.8];
-                        c1=[0.01 4 0.1];
+                        c1=[0.01 4 0.01];
                         c3=[0.05 15 1];
                         fitParams = [fitParams; c1;c2;c3];
                     end
 
-                    if 1
+                    if 0
                         fncName(6)={'ncg_{mph2}'};
                         % positive
                         fitFuncStr = [fitFuncStr '+e1*exp(-1*(x-e2)^2/e3^2)'];
-                        e2=[7 16 7.5];
-                        e1=[0.05 1 0.5];
-                        e3=[0.05 15 0.5];
+                        e2=[7.9 8.2 8];
+                        e1=[0 1 0.05];
+                        e3=[0 15 9];
                         fitParams = [fitParams; e1;e2;e3];
+                    end
+
+                    if 1
+                        fncName(16)={'lin_BG'};
+                        fitFuncStr = [fitFuncStr '+y0'];
+                        y0 = [0 1 0.05];
+                        fitParams = [fitParams;y0];
                     end
 
                 case 9 % use one Lorentzian as the RW mode,
