@@ -2,6 +2,8 @@
 
 Atom Surface Scattering Analysis
 
+Used to analyse the Cambridge helium-3 spin echo data before September 2022
+
 ## Analyse spin echo data in the energy domain
 
 ### Generate the spectrum
